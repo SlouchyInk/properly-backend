@@ -1,20 +1,36 @@
 package com.example.properly.auth;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
+import com.example.properly.auth.Role;
 
 @Entity
 public class Users {
 
     @Id
-    private int id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer id;
     private String username;
     private String password;
-    public int getId() {
+
+    @Enumerated(EnumType.STRING)
+    private Role role = Role.TENANT;
+
+    public Users() {}
+
+    public Users(String username, String password) {
+        this(username, password, Role.TENANT);
+    }
+
+    public Users(String username, String password, Role role) {
+        this.username = username;
+        this.password = password;
+        this.role = role;
+    }
+    public Integer getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
@@ -32,6 +48,14 @@ public class Users {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public Role getRole() {
+        return role;
+    }
+
+    public void setRole(Role role) {
+        this.role = role;
     }
 
 }
