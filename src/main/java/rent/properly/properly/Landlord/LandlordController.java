@@ -1,10 +1,14 @@
 package rent.properly.properly.Landlord;
 
+import org.apache.coyote.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import rent.properly.properly.Lease.Lease;
+import rent.properly.properly.Lease.LeaseNotFoundException;
+import rent.properly.properly.Lease.LeaseRepository;
 
 import java.util.List;
 
@@ -12,10 +16,12 @@ import java.util.List;
 @RequestMapping("/api/v1/landlord/")
 public class LandlordController {
 
+    private final LandlordRepository landlordRepository;
     private LandlordService landlordService;
 
     @Autowired
-    public LandlordController(LandlordService landlordService) {
+    public LandlordController(LandlordRepository landlordRepository, LandlordService landlordService) {
+        this.landlordRepository = landlordRepository;
         this.landlordService = landlordService;
     }
 
@@ -25,13 +31,10 @@ public class LandlordController {
     }
 
     @GetMapping("{id}")
-    public Landlord landlordDetail(@PathVariable Long id, HttpEntity<Object> httpEntity) {
-       return new Landlord(
-               1L,
-               "John",
-               "Doe",
-               "example@example.com"
-       );
+    public ResponseEntity<Landlord> landlordDetail(@PathVariable Long id, HttpEntity<Object> httpEntity) {
+        Landlord landlord = landlordRepository.findById(id)
+                .orElseThrow(() -> new LandlordNotFoundException("Landlord not found with id " + id));
+        return new ResponseEntity<>(landlord, HttpStatus.OK);
     }
 
     @PostMapping()

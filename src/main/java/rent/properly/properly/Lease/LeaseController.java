@@ -18,11 +18,13 @@ import java.util.List;
 @RequestMapping("/api/v1/lease/")
 public class LeaseController {
 
+    private final LeaseRepository leaseRepository;
     private LeaseService leaseService;
 
     @Autowired
-    public LeaseController(LeaseService leaseService) {
+    public LeaseController(LeaseService leaseService, LeaseRepository leaseRepository) {
         this.leaseService = leaseService;
+        this.leaseRepository = leaseRepository;
     }
 
     @GetMapping()
@@ -30,19 +32,12 @@ public class LeaseController {
         return new ResponseEntity<>(leaseService.getAllLeases(), HttpStatus.OK);
     }
 
-//    @GetMapping("{id}")
-//    public Lease leaseDetail(@PathVariable Long id, HttpEntity<Object> httpEntity) {
-//        return new Lease(
-//                1L,
-//                t,
-//                p,
-//                l,
-//                LocalDate.now(),
-//                LocalDate.now().plusMonths(12),
-//                new BigDecimal("1800.00")
-//        );
-//
-//    }
+    @GetMapping("{id}")
+    public ResponseEntity<Lease> leaseDetail(@PathVariable Long id, HttpEntity<Object> httpEntity) {
+        Lease lease = leaseRepository.findById(id)
+                .orElseThrow(() -> new LeaseNotFoundException("Lease not found with id "+ id));
+        return new ResponseEntity<>(lease, HttpStatus.OK);
+    }
 
     @PostMapping()
     @ResponseStatus(HttpStatus.CREATED)
