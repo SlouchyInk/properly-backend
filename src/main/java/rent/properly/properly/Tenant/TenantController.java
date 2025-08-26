@@ -14,25 +14,25 @@ import java.util.List;
 public class TenantController {
 
     private TenantService tenantService;
+    private TenantRepository tenantRepository;
 
     @Autowired
-    public TenantController(TenantService tenantService) {
+    public TenantController(TenantService tenantService, TenantRepository tenantRepository) {
         this.tenantService = tenantService;
+        this.tenantRepository = tenantRepository;
     }
 
     @GetMapping()
-    public ResponseEntity<List<TenantDto>> getTenants(HttpEntity<Object> httpEntity) {
-        return new ResponseEntity<>(tenantService.getAllTenants(), HttpStatus.OK);
+    public ResponseEntity<TenantResponse> getTenants(
+            @RequestParam(value = "pageNo", defaultValue = "0", required = false) int pageNo,
+            @RequestParam(value = "pageSize", defaultValue = "10", required = false) int pageSize
+    ) {
+        return new ResponseEntity<>(tenantService.getAllTenants(pageNo, pageSize), HttpStatus.OK);
     }
 
     @GetMapping("{id}")
-    public Tenant tenantDetails(@PathVariable Long id) {
-        return new Tenant(1L,
-                "Hayden",
-                "Durham",
-                "hayden.t.durham@gmail.com",
-                "+1(901)232-4545"
-        );
+    public ResponseEntity<TenantDto> tenantDetails(@PathVariable Long id) {
+        return ResponseEntity.ok(tenantService.getTenantById(id));
     }
 
     @PostMapping()
@@ -42,12 +42,14 @@ public class TenantController {
     }
 
     @PutMapping("{id}")
-    public ResponseEntity<Tenant> updateTenant(@PathVariable Long id, @RequestBody Tenant tenant) {
-        return new ResponseEntity<>(tenant, HttpStatus.OK);
+    public ResponseEntity<TenantDto> updateTenant(@PathVariable("id") Long tenantId, @RequestBody TenantDto tenantDto) {
+        TenantDto repsonse = tenantService.updateTenant(tenantId, tenantDto);
+        return new ResponseEntity<>(repsonse, HttpStatus.OK);
     }
 
     @DeleteMapping("{id}")
     public ResponseEntity<String> deleteTenant(@PathVariable Long id) {
-        return new ResponseEntity<>(HttpStatus.OK);
+        tenantService.deleteTenantById(id);
+        return new ResponseEntity<>("Tenant deleted", HttpStatus.OK);
     }
 }

@@ -7,9 +7,9 @@ import rent.properly.properly.Tenant.Tenant;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.List;
 
 @Data
-
 public class LeaseDto {
     private Long id;
     private Tenant tenant;

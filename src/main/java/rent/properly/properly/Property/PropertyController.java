@@ -21,13 +21,16 @@ public class PropertyController {
     }
 
     @GetMapping()
-    public ResponseEntity<List<PropertyDto>> getProperties() {
-        return new ResponseEntity<>(propertyService.getAllProperties(), HttpStatus.OK);
+    public ResponseEntity<PropertyResponse> getProperties(
+            @RequestParam(value = "pageNo", defaultValue = "0", required = false) int pageNo,
+            @RequestParam(value = "pageSize", defaultValue = "10", required = false) int pageSize
+    ) {
+        return new ResponseEntity<>(propertyService.getAllProperties(pageNo, pageSize), HttpStatus.OK);
     }
 
     @GetMapping("{id}")
-    public Property getPropertyDetail(@PathVariable Long id) {
-        return new Property(1L, "123 Spooner St");
+    public ResponseEntity<PropertyDto> getPropertyDetail(@PathVariable Long id) {
+        return ResponseEntity.ok(propertyService.getPropertyById(id));
     }
 
     @PostMapping()
@@ -37,12 +40,14 @@ public class PropertyController {
     }
 
     @PutMapping("{id}")
-    public ResponseEntity<Property> updateProperty(@PathVariable Long id, @RequestBody Property property) {
-        return new ResponseEntity<>(property, HttpStatus.OK);
+    public ResponseEntity<PropertyDto> updateProperty(@PathVariable("id") Long propertyId, @RequestBody PropertyDto propertyDto) {
+        PropertyDto response = propertyService.updateProperty(propertyId, propertyDto);
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     @DeleteMapping("{id}")
     public ResponseEntity<String> deleteProperty(@PathVariable Long id) {
-        return new ResponseEntity<>(HttpStatus.OK);
+        propertyService.deletePropertyById(id);
+        return new ResponseEntity<>("Property deleted", HttpStatus.OK);
     }
 }

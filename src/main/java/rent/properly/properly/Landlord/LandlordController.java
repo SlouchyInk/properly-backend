@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import rent.properly.properly.Lease.Lease;
 import rent.properly.properly.Lease.LeaseNotFoundException;
 import rent.properly.properly.Lease.LeaseRepository;
+import rent.properly.properly.Lease.LeaseService;
 
 import java.util.List;
 
@@ -17,24 +18,27 @@ import java.util.List;
 public class LandlordController {
 
     private final LandlordRepository landlordRepository;
+    private final LeaseService leaseService;
     private LandlordService landlordService;
 
     @Autowired
-    public LandlordController(LandlordRepository landlordRepository, LandlordService landlordService) {
+    public LandlordController(LandlordRepository landlordRepository, LandlordService landlordService, LeaseService leaseService) {
         this.landlordRepository = landlordRepository;
         this.landlordService = landlordService;
+        this.leaseService = leaseService;
     }
 
     @GetMapping()
-    public ResponseEntity<List<LandlordDto>> getLandlords() {
-        return new ResponseEntity<>(landlordService.getAllLandlords(), HttpStatus.OK);
+    public ResponseEntity<LandlordResponse> getLandlords(
+            @RequestParam(value = "pageNo", defaultValue = "0", required = false) int pageNo,
+            @RequestParam(value = "pageSize", defaultValue = "10", required = false) int pageSize
+    ) {
+        return new ResponseEntity<>(landlordService.getAllLandlords(pageNo, pageSize), HttpStatus.OK);
     }
 
     @GetMapping("{id}")
-    public ResponseEntity<Landlord> landlordDetail(@PathVariable Long id, HttpEntity<Object> httpEntity) {
-        Landlord landlord = landlordRepository.findById(id)
-                .orElseThrow(() -> new LandlordNotFoundException("Landlord not found with id " + id));
-        return new ResponseEntity<>(landlord, HttpStatus.OK);
+    public ResponseEntity<LandlordDto> landlordDetail(@PathVariable Long id) {
+        return ResponseEntity.ok(landlordService.getLandlordById(id));
     }
 
     @PostMapping()
@@ -44,12 +48,14 @@ public class LandlordController {
     }
 
     @PutMapping("{id}")
-    public ResponseEntity<Landlord> updateLandlord(@PathVariable Long id, @RequestBody Landlord landlord) {
-        return new ResponseEntity<>(landlord, HttpStatus.OK);
+    public ResponseEntity<LandlordDto> updateLandlord(@PathVariable("id") Long landlordId, @RequestBody LandlordDto landlordDto) {
+        LandlordDto response = landlordService.updateLandlord(landlordId, landlordDto);
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     @DeleteMapping("{id}")
     public ResponseEntity<String> deleteLandlord(@PathVariable Long id) {
-        return new ResponseEntity<>(HttpStatus.OK);
+        landlordService.deleteLandlordById(id);
+        return new ResponseEntity<>("Landlord delete", HttpStatus.OK);
     }
 }

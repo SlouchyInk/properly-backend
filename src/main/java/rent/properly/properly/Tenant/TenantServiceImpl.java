@@ -1,6 +1,9 @@
 package rent.properly.properly.Tenant;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -36,9 +39,46 @@ public class TenantServiceImpl implements TenantService {
     }
 
     @Override
-    public List<TenantDto> getAllTenants() {
-        List<Tenant> tenants = tenantRepository.findAll();
-        return tenants.stream().map(t -> mapToDto(t)).collect(Collectors.toList());
+    public TenantResponse getAllTenants(int pageNo, int pageSize) {
+        Pageable pageable = PageRequest.of(pageNo, pageSize);
+        Page<Tenant> tenants = tenantRepository.findAll(pageable);
+        List<Tenant> tenantList = tenants.getContent();
+        List<TenantDto> content = tenantList.stream().map(t -> mapToDto(t)).collect(Collectors.toList());
+
+        TenantResponse tenantResponse = new TenantResponse();
+        tenantResponse.setContent(content);
+        tenantResponse.setPageNo(tenants.getNumber());
+        tenantResponse.setPageSize(tenants.getSize());
+        tenantResponse.setTotalPages(tenants.getTotalPages());
+        tenantResponse.setTotalElements(tenants.getTotalElements());
+        tenantResponse.setLast(tenants.isLast());
+        return tenantResponse;
+    }
+
+    @Override
+    public TenantDto getTenantById(Long id) {
+        Tenant tenant = tenantRepository.findById(id)
+                .orElseThrow(() -> new TenantNotFoundException("Tenant not found with id " + id));
+        return mapToDto(tenant);
+    }
+
+    @Override
+    public TenantDto updateTenant(Long id, TenantDto tenantDto) {
+        Tenant tenant = tenantRepository.findById(id)
+                .orElseThrow(() -> new TenantNotFoundException("Tenant could not be updated"));
+        tenant.setFirstName(tenantDto.getFirstName());
+        tenant.setLastName(tenantDto.getLastName());
+        tenant.setEmail(tenantDto.getEmail());
+        tenant.setPhoneNumber(tenantDto.getPhoneNumber());
+        Tenant updatedTenant = tenantRepository.save(tenant);
+        return mapToDto(updatedTenant);
+    }
+
+    @Override
+    public void deleteTenantById(Long id) {
+        Tenant tenant = tenantRepository.findById(id)
+                .orElseThrow(() -> new TenantNotFoundException("Tenant could not be deleted"));
+        tenantRepository.delete(tenant);
     }
 
     private TenantDto mapToDto(Tenant tenant) {

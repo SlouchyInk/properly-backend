@@ -4,5 +4,8 @@ import java.util.List;
 
 public interface PropertyService {
     PropertyDto createProperty(PropertyDto propertyDto);
-    List<PropertyDto> getAllProperties();
+    PropertyResponse getAllProperties(int pageNo, int pageSize);
+    PropertyDto getPropertyById(Long id);
+    PropertyDto updateProperty(Long id, PropertyDto propertyDto);
+    void deletePropertyById(Long id);
 }

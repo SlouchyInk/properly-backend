@@ -1,6 +1,9 @@
 package rent.properly.properly.Lease;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -40,9 +43,51 @@ public class LeaseServiceImpl implements LeaseService {
     }
 
     @Override
-    public List<LeaseDto> getAllLeases() {
-        List<Lease> leases = leaseRepository.findAll();
-        return leases.stream().map(l -> mapToDto(l)).collect(Collectors.toList());
+    public LeaseResponse getAllLeases(int pageNo, int pageSize) {
+        Pageable pageable = PageRequest.of(pageNo, pageSize);
+        Page<Lease> leases = leaseRepository.findAll(pageable);
+        List<Lease> leaseList = leases.getContent();
+        List<LeaseDto> content =leaseList.stream().map(l -> mapToDto(l)).collect(Collectors.toList());
+
+        LeaseResponse leaseResponse = new LeaseResponse();
+        leaseResponse.setContent(content);
+        leaseResponse.setPageNo(leases.getNumber());
+        leaseResponse.setPageSize(leases.getSize());
+        leaseResponse.setTotalPages(leases.getTotalPages());
+        leaseResponse.setTotalElements(leases.getTotalElements());
+        leaseResponse.setLast(leases.isLast());
+
+        return leaseResponse;
+    }
+
+    @Override
+    public LeaseDto getLeaseById(Long id) {
+        Lease lease = leaseRepository.findById(id)
+                .orElseThrow(() -> new LeaseNotFoundException("Lease not found with id "+ id));
+        return mapToDto(lease);
+
+    }
+
+    @Override
+    public LeaseDto updateLease(Long id, LeaseDto leaseDto) {
+        Lease lease = leaseRepository.findById(id)
+                .orElseThrow(() -> new LeaseNotFoundException("Lease could not be updated"));
+        lease.setLandlord(leaseDto.getLandlord());
+        lease.setProperty(leaseDto.getProperty());
+        lease.setTenant(leaseDto.getTenant());
+        lease.setEndDate(leaseDto.getEndDate());
+        lease.setStartDate(leaseDto.getStartDate());
+        lease.setRentAmount(leaseDto.getRentAmount());
+
+        Lease updatedLease = leaseRepository.save(lease);
+        return mapToDto(updatedLease);
+    }
+
+    @Override
+    public void deleteLeaseById(Long id) {
+        Lease lease = leaseRepository.findById(id)
+                .orElseThrow(() -> new LeaseNotFoundException("Lease could not be deleted"));
+        leaseRepository.delete(lease);
     }
 
     private LeaseDto mapToDto(Lease lease) {
@@ -67,4 +112,6 @@ public class LeaseServiceImpl implements LeaseService {
         lease.setRentAmount(leaseDto.getRentAmount());
         return lease;
     }
+
+
 }

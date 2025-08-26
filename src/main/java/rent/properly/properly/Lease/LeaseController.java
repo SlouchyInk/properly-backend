@@ -22,21 +22,22 @@ public class LeaseController {
     private LeaseService leaseService;
 
     @Autowired
-    public LeaseController(LeaseService leaseService, LeaseRepository leaseRepository) {
-        this.leaseService = leaseService;
+    public LeaseController(LeaseRepository leaseRepository, LeaseService leaseService) {
         this.leaseRepository = leaseRepository;
+        this.leaseService = leaseService;
     }
 
     @GetMapping()
-    public ResponseEntity<List<LeaseDto>> getLease() {
-        return new ResponseEntity<>(leaseService.getAllLeases(), HttpStatus.OK);
+    public ResponseEntity<LeaseResponse> getLeases(
+            @RequestParam(value = "pageNo", defaultValue = "0", required = false) int pageNo,
+            @RequestParam(value = "pageSize", defaultValue = "10", required = false) int pageSize
+    ) {
+        return new ResponseEntity<>(leaseService.getAllLeases(pageNo, pageSize), HttpStatus.OK);
     }
 
     @GetMapping("{id}")
-    public ResponseEntity<Lease> leaseDetail(@PathVariable Long id, HttpEntity<Object> httpEntity) {
-        Lease lease = leaseRepository.findById(id)
-                .orElseThrow(() -> new LeaseNotFoundException("Lease not found with id "+ id));
-        return new ResponseEntity<>(lease, HttpStatus.OK);
+    public ResponseEntity<LeaseDto> leaseDetail(@PathVariable Long id) {
+        return ResponseEntity.ok(leaseService.getLeaseById(id));
     }
 
     @PostMapping()
@@ -46,12 +47,14 @@ public class LeaseController {
     }
 
     @PutMapping("{id}")
-    public ResponseEntity<Lease> updateLease(@PathVariable Long id, @RequestBody Lease lease) {
-        return new ResponseEntity<>(lease, HttpStatus.OK);
+    public ResponseEntity<LeaseDto> updateLease(@PathVariable("id") Long leaseId, @RequestBody LeaseDto leaseDto) {
+        LeaseDto response = leaseService.updateLease(leaseId, leaseDto);
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     @DeleteMapping("{id}")
     public ResponseEntity<String> deleteLease(@PathVariable Long id) {
-        return new ResponseEntity<>(HttpStatus.OK);
+        leaseService.deleteLeaseById(id);
+        return new ResponseEntity<>("Lease deleted",HttpStatus.OK);
     }
 }

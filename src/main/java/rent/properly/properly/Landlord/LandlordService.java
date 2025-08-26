@@ -5,5 +5,8 @@ import java.util.Optional;
 
 public interface LandlordService {
     LandlordDto createLandlord(LandlordDto landlordDto);
-    List<LandlordDto> getAllLandlords();
+    LandlordResponse getAllLandlords(int pageNo, int pageSize);
+    LandlordDto getLandlordById(Long id);
+    LandlordDto updateLandlord(Long id, LandlordDto landlordDto);
+    void deleteLandlordById(Long id);
 }

@@ -1,10 +1,12 @@
 package rent.properly.properly.Landlord;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
+import org.springframework.data.domain.Pageable;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -35,9 +37,48 @@ public class LandlordServiceImpl implements LandlordService {
     }
 
     @Override
-    public List<LandlordDto> getAllLandlords() {
-        List<Landlord> landlords = landlordRepository.findAll();
-        return landlords.stream().map(l -> mapToDto(l)).collect(Collectors.toList());
+    public LandlordResponse getAllLandlords(int pageNo, int pageSize) {
+        Pageable pageable = PageRequest.of(pageNo, pageSize);
+        Page<Landlord> landlords = landlordRepository.findAll(pageable);
+        List<Landlord> landlordList = landlords.getContent();
+        List<LandlordDto> content = landlordList.stream().map(l -> mapToDto(l)).collect(Collectors.toList());
+
+        LandlordResponse landlordResponse = new LandlordResponse();
+        landlordResponse.setContent(content);
+        landlordResponse.setPageNo(landlords.getNumber());
+        landlordResponse.setPageSize(landlords.getSize());
+        landlordResponse.setTotalPages(landlords.getTotalPages());
+        landlordResponse.setTotalElements(landlords.getTotalElements());
+        landlordResponse.setLast(landlords.isLast());
+
+        return landlordResponse;
+    }
+
+    @Override
+    public LandlordDto getLandlordById(Long id) {
+        Landlord landlord = landlordRepository.findById(id)
+                .orElseThrow(() -> new LandlordNotFoundException("Landlord not found with id " + id));
+        return mapToDto(landlord);
+    }
+
+    @Override
+    public LandlordDto updateLandlord(Long id, LandlordDto landlordDto) {
+        Landlord landlord = landlordRepository.findById(id)
+                .orElseThrow(() -> new LandlordNotFoundException("Landlord could not be updated"));
+        landlord.setFirstName(landlordDto.getFirstName());
+        landlord.setLastName(landlordDto.getLastName());
+        landlord.setEmail(landlordDto.getEmail());
+        Landlord updatedLandlord = landlordRepository.save(landlord);
+        return mapToDto(updatedLandlord);
+
+
+    }
+
+    @Override
+    public void deleteLandlordById(Long id) {
+        Landlord landlord = landlordRepository.findById(id)
+                .orElseThrow(() -> new LandlordNotFoundException("Landlord could not be deleted"));
+        landlordRepository.delete(landlord);
     }
 
     private LandlordDto mapToDto(Landlord landlord) {
@@ -57,4 +98,5 @@ public class LandlordServiceImpl implements LandlordService {
         landlord.setEmail(landlordDto.getEmail());
         return landlord;
     }
+
 }

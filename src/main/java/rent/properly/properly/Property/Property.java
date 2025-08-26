@@ -1,12 +1,14 @@
 package rent.properly.properly.Property;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import rent.properly.properly.Landlord.Landlord;
+import rent.properly.properly.Lease.Lease;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Data
 @AllArgsConstructor
@@ -18,5 +20,12 @@ public class Property {
     private Long id;
 
     private String address;
+
+    @OneToMany(mappedBy = "property", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Lease> leases = new ArrayList<>();
+
+    @ManyToOne
+    @JoinColumn(name = "landlord_id")
+    private Landlord landlord;
     
 }
