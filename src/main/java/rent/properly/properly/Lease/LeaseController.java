@@ -40,6 +40,11 @@ public class LeaseController {
         return ResponseEntity.ok(leaseService.getLeaseById(id));
     }
 
+    @GetMapping("{landlordId}/leases")
+    public ResponseEntity<List<LeaseDto>> getLeasesByLandlordId(@PathVariable(value = "landlordId") Long landlordId) {
+        return ResponseEntity.ok(leaseService.getLeaseByLandLordId(landlordId));
+    }
+
     @PostMapping()
     @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity<LeaseDto> createLease(@RequestBody LeaseDto leaseDto) {

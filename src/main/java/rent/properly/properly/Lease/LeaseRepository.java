@@ -3,6 +3,8 @@ package rent.properly.properly.Lease;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface LeaseRepository extends JpaRepository<Lease, Long> {
+import java.util.List;
 
+public interface LeaseRepository extends JpaRepository<Lease, Long> {
+    List<Lease> findByLandlord_Id(Long landlordId);
 }

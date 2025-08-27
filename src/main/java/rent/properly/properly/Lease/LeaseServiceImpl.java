@@ -69,6 +69,13 @@ public class LeaseServiceImpl implements LeaseService {
     }
 
     @Override
+    public List<LeaseDto> getLeaseByLandLordId(Long id) {
+        List<Lease> leases = leaseRepository.findByLandlord_Id(id);
+
+        return leases.stream().map(l -> mapToDto(l)).collect(Collectors.toList());
+    }
+
+    @Override
     public LeaseDto updateLease(Long id, LeaseDto leaseDto) {
         Lease lease = leaseRepository.findById(id)
                 .orElseThrow(() -> new LeaseNotFoundException("Lease could not be updated"));

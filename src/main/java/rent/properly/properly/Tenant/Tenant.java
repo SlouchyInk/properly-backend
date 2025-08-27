@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import rent.properly.properly.Landlord.Landlord;
 import rent.properly.properly.Lease.Lease;
 
 import java.util.ArrayList;
@@ -25,4 +26,8 @@ public class Tenant {
 
     @OneToMany(mappedBy = "tenant", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Lease> leases = new ArrayList<>();
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "landlord_id")
+    private Landlord landlord;
 }
