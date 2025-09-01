@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import rent.properly.properly.Landlord.Landlord;
 import rent.properly.properly.Property.Property;
 import rent.properly.properly.Tenant.Tenant;
+import rent.properly.properly.Unit.Unit;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -26,8 +27,8 @@ public class Lease {
     private Tenant tenant;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "property_id")
-    private Property property;
+    @JoinColumn(name = "unit_id")
+    private Unit unit;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "landlord_id")

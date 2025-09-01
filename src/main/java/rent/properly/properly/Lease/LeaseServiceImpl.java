@@ -22,7 +22,7 @@ public class LeaseServiceImpl implements LeaseService {
     public LeaseDto createLease(LeaseDto leaseDto) {
         Lease lease = new Lease();
         lease.setLandlord(leaseDto.getLandlord());
-        lease.setProperty(leaseDto.getProperty());
+        lease.setUnit(leaseDto.getUnit());
         lease.setTenant(leaseDto.getTenant());
         lease.setEndDate(leaseDto.getEndDate());
         lease.setStartDate(leaseDto.getStartDate());
@@ -33,7 +33,6 @@ public class LeaseServiceImpl implements LeaseService {
         LeaseDto leaseResponse = new LeaseDto();
         leaseResponse.setId(newlease.getId());
         leaseResponse.setLandlord(newlease.getLandlord());
-        leaseResponse.setProperty(newlease.getProperty());
         leaseResponse.setTenant(newlease.getTenant());
         leaseResponse.setEndDate(newlease.getEndDate());
         leaseResponse.setStartDate(newlease.getStartDate());
@@ -80,7 +79,7 @@ public class LeaseServiceImpl implements LeaseService {
         Lease lease = leaseRepository.findById(id)
                 .orElseThrow(() -> new LeaseNotFoundException("Lease could not be updated"));
         lease.setLandlord(leaseDto.getLandlord());
-        lease.setProperty(leaseDto.getProperty());
+        lease.setUnit(leaseDto.getUnit());
         lease.setTenant(leaseDto.getTenant());
         lease.setEndDate(leaseDto.getEndDate());
         lease.setStartDate(leaseDto.getStartDate());
@@ -101,7 +100,7 @@ public class LeaseServiceImpl implements LeaseService {
         LeaseDto leaseDto = new LeaseDto();
         leaseDto.setId(lease.getId());
         leaseDto.setLandlord(lease.getLandlord());
-        leaseDto.setProperty(lease.getProperty());
+        leaseDto.setUnit(lease.getUnit());
         leaseDto.setTenant(lease.getTenant());
         leaseDto.setEndDate(lease.getEndDate());
         leaseDto.setStartDate(lease.getStartDate());
@@ -112,7 +111,7 @@ public class LeaseServiceImpl implements LeaseService {
     private Lease mapToEntity(LeaseDto leaseDto) {
         Lease lease = new Lease();
         lease.setLandlord(leaseDto.getLandlord());
-        lease.setProperty(leaseDto.getProperty());
+        lease.setUnit(leaseDto.getUnit());
         lease.setTenant(leaseDto.getTenant());
         lease.setEndDate(leaseDto.getEndDate());
         lease.setStartDate(leaseDto.getStartDate());

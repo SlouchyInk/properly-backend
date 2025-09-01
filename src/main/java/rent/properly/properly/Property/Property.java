@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import rent.properly.properly.Landlord.Landlord;
 import rent.properly.properly.Lease.Lease;
+import rent.properly.properly.Unit.Unit;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,11 +22,11 @@ public class Property {
 
     private String address;
 
-    @OneToMany(mappedBy = "property", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Lease> leases = new ArrayList<>();
-
     @ManyToOne
     @JoinColumn(name = "landlord_id")
     private Landlord landlord;
+
+    @OneToMany(mappedBy = "property", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Unit> units = new ArrayList<>();
     
 }

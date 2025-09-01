@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/v1/tenants")
+@RequestMapping("/api/v1/tenant")
 public class TenantController {
 
     private TenantService tenantService;
