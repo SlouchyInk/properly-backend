@@ -24,14 +24,16 @@ public class AuthController {
     private UserRepository userRepository;
     private RoleRepository roleRepository;
     private PasswordEncoder passwordEncoder;
+    private JWTGenerator tokenGenerator;
 
     @Autowired
     public AuthController(AuthenticationManager authenticationManager, UserRepository userRepository,
-                          RoleRepository roleRepository, PasswordEncoder passwordEncoder) {
+                          RoleRepository roleRepository, PasswordEncoder passwordEncoder, JWTGenerator tokenGenerator) {
         this.authenticationManager = authenticationManager;
         this.userRepository = userRepository;
         this.roleRepository = roleRepository;
         this.passwordEncoder = passwordEncoder;
+        this.tokenGenerator = tokenGenerator;
     }
 
     @PostMapping("/register")
@@ -50,10 +52,11 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<String> login(@RequestBody LoginDto loginDto) {
+    public ResponseEntity<AuthResponseDto> login(@RequestBody LoginDto loginDto) {
         Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
                 loginDto.getUsername(), loginDto.getPassword()));
         SecurityContextHolder.getContext().setAuthentication(authentication);
-        return ResponseEntity.ok("Login successful!");
+        String token = tokenGenerator.generateToken(authentication);
+        return ResponseEntity.ok(new AuthResponseDto(token));
     }
 }
