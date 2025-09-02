@@ -1,0 +1,12 @@
+package rent.properly.properly.tenant;
+
+import lombok.Data;
+
+@Data
+public class TenantDto {
+    private Long id;
+    private String firstName;
+    private String lastName;
+    private String email;
+    private String phoneNumber;
+}

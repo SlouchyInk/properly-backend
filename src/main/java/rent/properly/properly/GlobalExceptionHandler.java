@@ -5,18 +5,18 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
-import rent.properly.properly.Landlord.LandlordNotFoundException;
-import rent.properly.properly.Lease.LeaseNotFoundException;
-import rent.properly.properly.Property.PropertyNotFoundException;
-import rent.properly.properly.Tenant.TenantNotFoundException;
+import rent.properly.properly.organization.OrganizationNotFoundException;
+import rent.properly.properly.lease.LeaseNotFoundException;
+import rent.properly.properly.property.PropertyNotFoundException;
+import rent.properly.properly.tenant.TenantNotFoundException;
 
 import java.util.Date;
 
 @ControllerAdvice
 public class GlobalExceptionHandler {
 
-    @ExceptionHandler(LandlordNotFoundException.class)
-    public ResponseEntity<ErrorObject> handleLandlordNotFound(LandlordNotFoundException ex, WebRequest request) {
+    @ExceptionHandler(OrganizationNotFoundException.class)
+    public ResponseEntity<ErrorObject> handleLandlordNotFound(OrganizationNotFoundException ex, WebRequest request) {
         ErrorObject errorObject = new ErrorObject();
 
         errorObject.setStatusCode(HttpStatus.NOT_FOUND.value());
