@@ -1,6 +1,7 @@
 package rent.properly.properly.security;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -18,6 +19,7 @@ import java.util.Collections;
 @RequestMapping("/api/v1/auth")
 public class AuthController {
 
+    private final RegisterService registerService;
     private AuthenticationManager authenticationManager;
     private UserRepository userRepository;
     private RoleRepository roleRepository;
@@ -26,12 +28,13 @@ public class AuthController {
 
     @Autowired
     public AuthController(AuthenticationManager authenticationManager, UserRepository userRepository,
-                          RoleRepository roleRepository, PasswordEncoder passwordEncoder, JWTGenerator tokenGenerator) {
+                          RoleRepository roleRepository, PasswordEncoder passwordEncoder, JWTGenerator tokenGenerator, RegisterService registerService) {
         this.authenticationManager = authenticationManager;
         this.userRepository = userRepository;
         this.roleRepository = roleRepository;
         this.passwordEncoder = passwordEncoder;
         this.tokenGenerator = tokenGenerator;
+        this.registerService = registerService;
     }
 
     @PostMapping("/register")
@@ -56,5 +59,11 @@ public class AuthController {
         SecurityContextHolder.getContext().setAuthentication(authentication);
         String token = tokenGenerator.generateToken(authentication);
         return ResponseEntity.ok(new AuthResponseDto(token));
+    }
+
+    @PostMapping("/register-with-organization")
+    public ResponseEntity<String> registerWithOrganization(@RequestBody RegisterWithOrganizationRequest request) {
+        registerService.registerWithOrganization(request);
+        return new ResponseEntity<>("User and Organization registered successfully!", HttpStatus.OK);
     }
 }

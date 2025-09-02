@@ -21,17 +21,25 @@ public class OrganizationServiceImpl implements OrganizationService {
     @Override
     public OrganizationDto createOrganization(OrganizationDto organizationDto) {
         Organization organization = new Organization();
-        organization.setFirstName(organizationDto.getFirstName());
-        organization.setLastName(organizationDto.getLastName());
-        organization.setEmail(organizationDto.getEmail());
+        organization.setDisplayName(organizationDto.getDisplayName());
+        organization.setLeases(organizationDto.getLeases());
+        organization.setProperties(organizationDto.getProperties());
+        organization.setTenants(organizationDto.getTenants());
+        organization.setUsers(organizationDto.getUsers());
+        organization.setType(organizationDto.getType());
+        organization.setPlanTier(organizationDto.getPlanTier());
 
         Organization newOrganization = organizationRepository.save(organization);
 
         OrganizationDto organizationResponse = new OrganizationDto();
         organizationResponse.setId(newOrganization.getId());
-        organizationResponse.setFirstName(newOrganization.getFirstName());
-        organizationResponse.setLastName(newOrganization.getLastName());
-        organizationResponse.setEmail(newOrganization.getEmail());
+        organizationResponse.setDisplayName(newOrganization.getDisplayName());
+        organizationResponse.setLeases(newOrganization.getLeases());
+        organizationResponse.setProperties(newOrganization.getProperties());
+        organizationResponse.setTenants(newOrganization.getTenants());
+        organizationResponse.setUsers(newOrganization.getUsers());
+        organizationResponse.setType(newOrganization.getType());
+        organizationResponse.setPlanTier(newOrganization.getPlanTier());
 
         return organizationResponse;
     }
@@ -65,13 +73,15 @@ public class OrganizationServiceImpl implements OrganizationService {
     public OrganizationDto updateOrganization(Long id, OrganizationDto organizationDto) {
         Organization organization = organizationRepository.findById(id)
                 .orElseThrow(() -> new OrganizationNotFoundException("organization could not be updated"));
-        organization.setFirstName(organizationDto.getFirstName());
-        organization.setLastName(organizationDto.getLastName());
-        organization.setEmail(organizationDto.getEmail());
+        organization.setDisplayName(organizationDto.getDisplayName());
+        organization.setLeases(organizationDto.getLeases());
+        organization.setProperties(organizationDto.getProperties());
+        organization.setTenants(organizationDto.getTenants());
+        organization.setUsers(organizationDto.getUsers());
+        organization.setType(organizationDto.getType());
+        organization.setPlanTier(organizationDto.getPlanTier());
         Organization updatedOrganization = organizationRepository.save(organization);
         return mapToDto(updatedOrganization);
-
-
     }
 
     @Override
@@ -84,18 +94,26 @@ public class OrganizationServiceImpl implements OrganizationService {
     private OrganizationDto mapToDto(Organization organization) {
         OrganizationDto organizationDto = new OrganizationDto();
         organizationDto.setId(organization.getId());
-        organizationDto.setFirstName(organization.getFirstName());
-        organizationDto.setLastName(organization.getLastName());
-        organizationDto.setEmail(organization.getEmail());
+        organizationDto.setDisplayName(organization.getDisplayName());
+        organizationDto.setLeases(organization.getLeases());
+        organizationDto.setProperties(organization.getProperties());
+        organizationDto.setTenants(organization.getTenants());
+        organizationDto.setUsers(organization.getUsers());
+        organizationDto.setType(organization.getType());
+        organizationDto.setPlanTier(organization.getPlanTier());
         return organizationDto;
     }
 
     private Organization mapToEntity(OrganizationDto organizationDto) {
         Organization organization = new Organization();
         organization.setId(organizationDto.getId());
-        organization.setFirstName(organizationDto.getFirstName());
-        organization.setLastName(organizationDto.getLastName());
-        organization.setEmail(organizationDto.getEmail());
+        organization.setDisplayName(organizationDto.getDisplayName());
+        organization.setLeases(organizationDto.getLeases());
+        organization.setProperties(organizationDto.getProperties());
+        organization.setTenants(organizationDto.getTenants());
+        organization.setUsers(organizationDto.getUsers());
+        organization.setType(organizationDto.getType());
+        organization.setPlanTier(organizationDto.getPlanTier());
         return organization;
     }
 
