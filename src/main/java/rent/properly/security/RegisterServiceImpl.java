@@ -82,9 +82,9 @@ public class RegisterServiceImpl implements RegisterService {
         user.setUsername(request.getUsername());
         user.setPassword(passwordEncoder.encode(request.getPassword()));
 
-        Role tenantRole = roleRepository.findByName("TENANT").orElseGet(() -> {
+        Role tenantRole = roleRepository.findByName("ROLE_TENANT").orElseGet(() -> {
             Role r = new Role();
-            r.setName("TENANT");
+            r.setName("ROLE_TENANT");
             return roleRepository.save(r);
         });
 
